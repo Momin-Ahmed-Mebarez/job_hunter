@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Board</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>Available Jobs</h1>
+        <p>Track job opportunities</p>
+    </header>
+
+
+    <main class="container">
+
+        {% if valid_jobs %}
+
+        <div class="jobs-grid">
+
+            {% for job in valid_jobs %}
+
+            <div class="job-card">
+
+                <div class="job-number">
+                    #{{ loop.index }}
+                </div>
+
+                <div class="job-content">
+
+                    <div class="provider">
+                        {{ job.provider }}
+                    </div>
+
+                    <h2>
+                        <a href="{{ job.link }}" target="_blank">
+                            {{ job.title }}
+                        </a>
+                    </h2>
+
+                    <p class="date">
+                        {{ job.date }}
+                    </p>
+
+                </div>
+
+
+                <label class="apply-box">
+                        <input type="checkbox" onclick="updateEntry('{{job.provider}}','{{job.job_id}}')">
+                    <span>Applied</span>
+
+                </label>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <section class="empty">
+            <h2>No jobs available yet</h2>
+            <p>New job listings will appear here.</p>
+        </section>
+
+        {% endif %}
+
+    </main>
+
+
+    <script>
+        function updateEntry(jobProvider,jobID){
+            fetch(`http://192.168.1.62:5000/apply?job_id=${jobID}&provider=${jobProvider}`,{method: "POST"})
+        } 
+    </script>
+</body>
+</html>
