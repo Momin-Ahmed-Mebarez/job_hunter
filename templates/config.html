@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Job Validator Config</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='config.css') }}"
+    >
+</head>
+
+<body>
+
+    <main class="config-container">
+
+        <header class="page-header">
+            <div>
+                <h1>Job Validator Configuration</h1>
+                <p>Configure the language models used to validate job listings.</p>
+            </div>
+        </header>
+
+        <form method="post" class="config-form">
+
+            <!-- Enable LLM -->
+            <section class="enable-card">
+                <div>
+                    <h2>LLM Validation</h2>
+                    <p>
+                        Enable AI-based validation for collected jobs.
+                    </p>
+                </div>
+
+                <label class="switch">
+                    <input
+                        id="validate"
+                        type="checkbox"
+                        name="validate"
+                    >
+
+                    <span class="slider"></span>
+                </label>
+            </section>
+
+
+            <!-- Hidden until checkbox is enabled -->
+            <div id="llm-settings" class="llm-settings">
+
+                <!-- CV -->
+                <section class="config-card">
+
+                    <div class="section-header">
+                        <div>
+                            <h2>CV Validation</h2>
+                            <p>
+                                Model responsible for extracring rules from your CV.
+                                The rules are used to determine whether a job matches you or not.
+                                If not provided create a cv_rules.txt in prompts folder.
+                                Only open-ai compatibile models are supported. (feel free to change helpers/llm.py to support others).                            </p>
+                        </div>
+
+                        <span class="badge optional-badge">Optional</span>
+                    </div>
+
+                    <div class="fields">
+
+                        <div class="form-group full-width">
+                            <label for="cv_llm_link">
+                                API URL
+                            </label>
+
+                            <input
+                                id="cv_llm_link"
+                                type="text"
+                                name="cv_llm_link"
+                                placeholder="http://localhost:11434/v1/chat/completions"
+                            >
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="cv_llm_model">
+                                Model
+                            </label>
+
+                            <input
+                                id="cv_llm_model"
+                                type="text"
+                                name="cv_llm_model"
+                                placeholder="qwen3:4b"
+                            >
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="cv_llm_api_key">
+                                API Key
+                                <span class="optional">(optional)</span>
+                            </label>
+
+                            <input
+                                id="cv_llm_api_key"
+                                type="password"
+                                name="cv_llm_api_key"
+                                placeholder="API key"
+                                autocomplete="off"
+                            >
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Title -->
+                <section class="config-card">
+
+                    <div class="section-header">
+                        <div>
+                            <h2>Title Validation</h2>
+                            <p>
+                                Optionally reject irrelevant jobs using only
+                                their title before running more expensive models.
+                                Only open-ai compatibile models are supported. (feel free to change helpers/llm.py to support others).
+                            </p>
+                        </div>
+
+                        <span class="badge optional-badge">Optional</span>
+                    </div>
+
+                    <div class="fields">
+
+                        <div class="form-group full-width">
+                            <label for="title_llm_link">
+                                API URL
+                            </label>
+
+                            <input
+                                id="title_llm_link"
+                                type="text"
+                                name="title_llm_link"
+                                placeholder="http://localhost:11434/v1/chat/completions"
+                            >
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="title_llm_model">
+                                Model
+                            </label>
+
+                            <input
+                                id="title_llm_model"
+                                type="text"
+                                name="title_llm_model"
+                                placeholder="qwen3:1.7b"
+                            >
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="title_llm_api_key">
+                                API Key
+                                <span class="optional">(optional)</span>
+                            </label>
+
+                            <input
+                                id="title_llm_api_key"
+                                type="password"
+                                name="title_llm_api_key"
+                                placeholder="API key"
+                                autocomplete="off"
+                            >
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Job description -->
+                <section class="config-card">
+
+                    <div class="section-header">
+                        <div>
+                            <h2>Job Description Validation</h2>
+                            <p>
+                                Model used to inspect and validate the full
+                                job description.
+                                Only open-ai compatibile models are supported. (feel free to change helpers/llm.py to support others).
+                            </p>
+                        </div>
+
+                        <span class="badge">Required</span>
+                    </div>
+
+
+                    <div class="fields">
+
+                        <div class="form-group full-width">
+                            <label for="job_llm_link">
+                                API URL
+                            </label>
+
+                            <input
+                                id="job_llm_link"
+                                type="text"
+                                name="job_llm_link"
+                                placeholder="http://localhost:11434/v1/chat/completions"
+                            >
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="job_llm_model">
+                                Model
+                            </label>
+
+                            <input
+                                id="job_llm_model"
+                                type="text"
+                                name="job_llm_model"
+                                placeholder="qwen3:4b"
+                            >
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="job_llm_api_key">
+                                API Key
+                                <span class="optional">(optional)</span>
+                            </label>
+
+                            <input
+                                id="job_llm_api_key"
+                                type="password"
+                                name="job_llm_api_key"
+                                placeholder="API key"
+                                autocomplete="off"
+                            >
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <div class="form-actions">
+                <button type="submit">
+                    Generate Config
+                </button>
+            </div>
+
+        </form>
+
+    </main>
+
+
+    <script>
+        const validateCheckbox = document.getElementById("validate");
+        const llmSettings = document.getElementById("llm-settings");
+
+        function updateVisibility() {
+            if (validateCheckbox.checked) {
+                llmSettings.classList.add("visible");
+            } else {
+                llmSettings.classList.remove("visible");
+            }
+        }
+
+        validateCheckbox.addEventListener("change", updateVisibility);
+
+        updateVisibility();
+    </script>
+
+</body>
+</html>
