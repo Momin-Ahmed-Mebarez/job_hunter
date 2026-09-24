@@ -17,31 +17,26 @@ class DBHandle():
     def drop_tables(self) -> None:
         self.connection.execute("DROP TABLE jobs")
 
-    def add_job(self, job : Dict[str,Any]) -> bool | None:
+    def add_job(self, job : Dict[str,Any]):
         job["title"] = job["title"] if job.get("title") != None else "no_title_available"
         job["description"] = job["description"] if job.get("description") != None else "no_description_available"
     
         try:
-            cursor = self.connection.execute("INSERT OR IGNORE into jobs (job_id,provider,title,description,link) values (:job_id,:provider,:title,:description,:link) RETURNING id",job)
-            inserted = cursor.fetchone() != None
-
-            if(inserted):
-                self.connection.commit()
-                return inserted
-            else: 
-                self.connection.rollback()
-                return inserted
+            self.connection.execute("INSERT OR IGNORE into jobs (job_id,provider,title,description,link) values (:job_id,:provider,:title,:description,:link)",job)
         except Exception as e:
             #print(traceback.format_exc())
-            raise Exception("Couldn't write job to database (this shouldn't happen)") from e
-        finally:
             self.connection.rollback()
-
-
+            raise Exception("Couldn't write job to database (this shouldn't happen)") from e
+        
+        self.connection.commit()
 
     def read_jobs(self) -> List[Dict[str,Any]]:
-        cursor = self.connection.execute("SELECT * FROM jobs WHERE applied = 0")
+        cursor = self.connection.execute("SELECT * FROM jobs WHERE applied = 0 ORDER BY date DESC limit 100")
         return [dict(row) for row in cursor.fetchall()]
+    
+    def check_job_exists(self,filter: Dict[str,str]) -> bool:
+        cursor = self.connection.execute("SELECT 1 FROM jobs WHERE job_id = :job_id AND provider = :provider",filter)
+        return cursor.fetchone() != None
 
     def change_apply_to_true(self,filter: Dict[str,str]) -> None:
         try:
