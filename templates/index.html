@@ -74,7 +74,7 @@
 
     <script>
         function updateEntry(jobProvider,jobID){
-            fetch(`http://192.168.1.62:5000/apply?job_id=${jobID}&provider=${jobProvider}`,{method: "POST"})
+            fetch(`/apply?job_id=${jobID}&provider=${jobProvider}`,{method: "POST"})
         } 
     </script>
 </body>
