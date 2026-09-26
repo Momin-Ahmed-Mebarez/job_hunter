@@ -22,7 +22,7 @@ class DBHandle():
         job["description"] = job["description"] if job.get("description") != None else "no_description_available"
     
         try:
-            self.connection.execute("INSERT OR IGNORE into jobs (job_id,provider,title,description,link) values (:job_id,:provider,:title,:description,:link)",job)
+            self.connection.execute("INSERT OR IGNORE into jobs (job_id,provider,title,description,link,showable) values (:job_id,:provider,:title,:description,:link,:showable)",job)
         except Exception as e:
             #print(traceback.format_exc())
             self.connection.rollback()
@@ -31,7 +31,7 @@ class DBHandle():
         self.connection.commit()
 
     def read_jobs(self) -> List[Dict[str,Any]]:
-        cursor = self.connection.execute("SELECT * FROM jobs WHERE applied = 0 ORDER BY date DESC limit 100")
+        cursor = self.connection.execute("SELECT * FROM jobs WHERE applied = 0 AND showable = 1 ORDER BY date DESC limit 100")
         return [dict(row) for row in cursor.fetchall()]
     
     def check_job_exists(self,filter: Dict[str,str]) -> bool:
