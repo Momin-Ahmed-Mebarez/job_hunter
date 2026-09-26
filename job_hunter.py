@@ -1,14 +1,17 @@
 #TODO change to bulk inseration in the database
+#TODO Implement retry on rate limit instead of sleeping for a random amount
 from pathlib import Path
-import sqlite3,time,json
+import sqlite3,time,json,os
 from threading import Thread
 from queue import Queue
 from winsound import Beep
 
 from flask import Flask,render_template,g,request,redirect,url_for
+import pymupdf
 
 from helpers.db_handle import DBHandle
-from helpers.api_keeper import store_keys
+from helpers.api_keeper import store_keys,get_key
+from helpers.llm import LLM
 
 #Modules to check for sites (each module handles a site)
 from targets import sabbar
@@ -16,10 +19,18 @@ from targets import sabbar
 
 
 HOME = Path(__file__).resolve().parent
+ALLOWED_EXTENSIONS = {'pdf'}
+MAIN_LLM = LLM() 
+
 config = {}
 
 app = Flask(__name__)
 db_queue = Queue()
+
+#Helper methods
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def get_handle() -> DBHandle:
     if "db" not in g:
@@ -63,16 +74,45 @@ def check_for_jobs():
         jobs = []
         try:
             jobs.extend(sabbar.update_jobs())
-            for job in jobs:
+            for job in jobs:    
+                suitable = True
                 is_duplicate = handle.check_job_exists({"job_id":job["job_id"],"provider":job["provider"]})
 
                 if(is_duplicate):
                     continue
                 
-                updated = True
-                db_queue.put({"operation":"new","data":job})
+                if(config["title_llm_link"] and config["title_llm_model"]):
+                    suitable = MAIN_LLM.check_suitable(msg=job["title"].strip(),llm_link=config["title_llm_link"],llm_model=config["title_llm_model"],llm_api=get_key("title_llm_api_key"))
+                    print("Boolean value of the LLM resp [title]: " + str(suitable))
+                    print("Original job title: " + job["title"])
+
+                if(suitable):
+                    if(config["job_llm_link"] and config["job_llm_model"]):
+
+                        if(job.get("description",None) is None): job["description"] = sabbar.get_description(job["link"])
+                        
+                        suitable = MAIN_LLM.check_suitable(msg=job["description"].strip(),llm_link=config["job_llm_link"],llm_model=config["job_llm_model"],llm_api=get_key("title_llm_api_key"))
+                        print("Boolean value of the LLM resp [DESC]: " + str(suitable))
+                        print("Original job desc: " + job["description"])
+                        if(suitable):
+                            updated = True
+                            job["showable"] = 1
+                            db_queue.put({"operation":"new","data":job})
+                        else:
+                            job["showable"] = 0
+                            db_queue.put({"operation":"new","data":job})  
+
+                        time.sleep(1) #Adding a small delay to try not triggering rate limit on job site
+                    else:
+                        updated = True
+                        job["showable"] = 1
+                        db_queue.put({"operation":"new","data":job})
+                else:
+                    job["showable"] = 0
+                    db_queue.put({"operation":"new","data":job})                    
+
         except Exception as e:
-            print(e)
+            print("Error: ", e)
 
         if(updated):
             print("Updated jobs list")
@@ -87,11 +127,11 @@ def check_for_jobs():
 #Initialize functions
 def init_db():
     connection = sqlite3.connect(HOME / "helpers" / "jobs.db")
-    #Only one time
-    #connection.execute("PRAGMA journal_mode=WAL;")
-    #connection.execute("PRAGMA synchronous=NORMAL;")
+    #Only one time can be commented after running the script the first time
+    connection.execute("PRAGMA journal_mode=WAL;")
+    connection.execute("PRAGMA synchronous=NORMAL;")
     
-    #DBHandle(connection).drop_tables()
+    DBHandle(connection).drop_tables()
 
    
     DBHandle(connection).init_db()
@@ -111,6 +151,9 @@ def load_config():
 def main():
     if(not config):
         return redirect(url_for("config"))
+
+    if(config["validate_job_desc"] and config["cv_llm_link"] and not os.path.isfile(HOME / "prompts" / "cv_rules.txt")):
+        return redirect(url_for("cv"))
 
     handle = get_handle()
     valid_jobs = handle.read_jobs()
@@ -153,9 +196,23 @@ def config():
             return redirect(url_for("main"))
     return render_template("config.html")
 
-@app.route("/test",methods=["POST","GET"])
-def test():
+@app.route("/cv",methods=["POST","GET"])
+def cv():
     if(request.method == "POST"):
+            file = request.files["file"]
+            if file.filename == '' or not allowed_file(file.filename):
+                return render_template("error.html",err="File isn't a pdf")
+            
+            cv_text = ""
+            with pymupdf.open(stream=file.read(),filetype="pdf") as document:
+                for page in document:
+                    cv_text += page.get_text()
+            try:
+                MAIN_LLM.create_cv_rules(msg=cv_text.strip(),llm_link=config["cv_llm_link"],llm_model=config["cv_llm_model"],llm_api=get_key("cv_llm_api_key"))
+            except KeyError:
+                return render_template("error.html",err="The llm link and model are required otherwise disable validation")
+            except Exception as e:
+                return render_template("error.html",err=str(e))
             return redirect(url_for("main"))
     return render_template("cv.html")
 
@@ -182,4 +239,4 @@ if __name__ == "__main__":
     db_thread.start()
     jobs_thread.start()
 
-    app.run(debug=True,host="192.168.1.64",use_reloader=False)
+    app.run(debug=True,host="192.168.1.65",use_reloader=False)
