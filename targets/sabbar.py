@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from targets.base import get_target
 from typing import List,Dict
+import time
 
 #TODO add filters
 LINKS = ["https://sabbar.com/en/jobs/c-jeddah","https://sabbar.com/ar/jobs/c-%D8%AC%D8%AF%D8%A9"]
@@ -25,3 +26,11 @@ def update_jobs() -> List[Dict[str,str]]:
         return jobs
     except Exception as e:
         raise Exception(e)
+
+def get_description(link : str) -> str:
+    soup = BeautifulSoup(get_target(link),"html.parser")
+    
+    desc_column = soup.find("div",attrs={"class":"ant-row"}).find("div",attrs={"class":"ant-col"})
+    desc = desc_column.get_text("\n",strip=True)
+    
+    return desc
