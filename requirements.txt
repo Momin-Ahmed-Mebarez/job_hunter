@@ -1,3 +1,4 @@
 curl_cffi
 flask
 pymupdf
+dotenv
