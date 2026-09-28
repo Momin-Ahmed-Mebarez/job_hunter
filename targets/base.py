@@ -10,12 +10,12 @@ basic_header = {
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
         }
 
-def get_target(url : str ,header : Dict[str,Any] = basic_header) -> str:
+def get_target(url : str ,header : Dict[str,Any] = basic_header) -> requests.Response:
     try:
         resp = requests.get(url,headers=header,impersonate="chrome",timeout=8)
         resp.raise_for_status()
 
-        return resp.text
+        return resp
     
     except requests.exceptions.HTTPError:
         raise Exception(f"Request wasn't succesful Error: {resp.status_code}")
