@@ -102,7 +102,7 @@ def check_for_jobs():
                             job["showable"] = 0
                             db_queue.put({"operation":"new","data":job})  
 
-                        time.sleep(1) #Adding a small delay to try not triggering rate limit on job site
+                        time.sleep(5) #Adding a small delay to try not triggering rate limit on job site
                     else:
                         updated = True
                         job["showable"] = 1
