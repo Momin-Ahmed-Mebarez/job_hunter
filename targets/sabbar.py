@@ -11,7 +11,7 @@ def update_jobs() -> List[Dict[str,str]]:
     jobs = []
     try:
         for link in LINKS:
-            soup = BeautifulSoup(get_target(link),"html.parser")
+            soup = BeautifulSoup(get_target(link).text,"html.parser")
         
             listed_jobs = soup.find_all("div",attrs={"class":"job-card"})
     
