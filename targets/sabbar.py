@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 from targets.base import get_target
 from typing import List,Dict
-import time
 
 #TODO add filters
 LINKS = ["https://sabbar.com/en/jobs/c-jeddah","https://sabbar.com/ar/jobs/c-%D8%AC%D8%AF%D8%A9"]
