@@ -19,8 +19,9 @@ class DBHandle():
 
     def add_job(self, job : Dict[str,Any]):
         job["title"] = job["title"] if job.get("title") != None else "no_title_available"
-        job["description"] = job["description"] if job.get("description") != None else "no_description_available"
-    
+        #job["description"] = job["description"] if job.get("description") != None else "no_description_available"
+        job["description"] = "" #We avoid saving the job description as it might be looked upon as copyright infringement
+
         try:
             self.connection.execute("INSERT OR IGNORE into jobs (job_id,provider,title,description,link,showable) values (:job_id,:provider,:title,:description,:link,:showable)",job)
         except Exception as e:
