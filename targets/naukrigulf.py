@@ -1,8 +1,7 @@
 #NOTE The results from this site are unordered by nature, I am trying to get the latest while respecting not to pull the entire site listed jobs
 
 from bs4 import BeautifulSoup
-#from targets.base import get_target
-from base import get_target
+from targets.base import get_target
 from typing import List,Dict
 
 #TODO add filters
