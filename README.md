@@ -9,7 +9,7 @@ cd job_hunter
 pip install -r requirements.txt
 ```
 
-Usage \n
+Usage<br>
 Please check [Recommendations](-Recommendations) before running the script.
 ```bash
 python job_hunter.py
@@ -20,8 +20,8 @@ Running the script will launch a flask self-hosted server on the provided ip
 <p align="center">
   <img src="assets/ip.png" />
 </p>
-- If conifg.json isn't set then the webpage will redirect you to /config where you can set up LLM usage.\n
+- If conifg.json isn't set then the webpage will redirect you to /config where you can set up LLM usage.<br>
 - If you chose to use a LLM you will be directed to /cv to upload your cv.The specified llm will be used to extract rules from your cv. You can create your own cv_rules.txt in /prompts folder (This rules are the prompt used by the LLM to understand it's task)
 
 
-#Recommendations
+Recommendations
