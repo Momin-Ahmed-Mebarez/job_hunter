@@ -15,8 +15,7 @@ def update_jobs() -> List[Dict[str,str]]:
                 job_link = listed_job["href"]
                 job_id = job_link.removesuffix("/").split("/")[-1]
                 job_title = listed_job.text.replace("مطلوب","").strip()
-                
-                jobs.append({"job_id":job_id,"provider":"Sabbar","title":job_title,"link":job_link})
+                jobs.append({"job_id":job_id,"provider":"jobsarab","title":job_title,"link":job_link})
 
         return jobs
     except Exception as e:
