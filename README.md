@@ -5,6 +5,9 @@
 ## NOTE
 Only jobs offered in Jeddah are supported but feel to edit /targets/(targeted site).py links list to add another page. I plan on adding support but it's a low priority.
 
+## Another NOTE
+Further updates will focus on improving the code rather than updating targeted sites. This project is still in development so the code may change a lot.
+
 ## Installation
 ```bash
 git clone https://github.com/Momin-Ahmed-Mebarez/job_hunter.git
