@@ -1,7 +1,7 @@
 #TODO change to bulk inseration in the database
 #TODO Implement retry on rate limit instead of sleeping for a random amount
 from pathlib import Path
-import sqlite3,time,json,os
+import sqlite3,time,json,os,socket
 from threading import Thread
 from queue import Queue
 from winsound import Beep
@@ -239,4 +239,4 @@ if __name__ == "__main__":
     db_thread.start()
     jobs_thread.start()
 
-    app.run(debug=True,host="192.168.1.65",use_reloader=False)
+    app.run(debug=True,host=socket.gethostbyname(socket.gethostname()),use_reloader=False)
