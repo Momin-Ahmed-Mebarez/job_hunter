@@ -1,4 +1,4 @@
-#TODO change to bulk inseration in the database
+#TODO change to bulk inseration in the database (maybe)
 #TODO Implement retry on rate limit instead of sleeping for a random amount
 from pathlib import Path
 from io import BytesIO
