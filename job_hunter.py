@@ -1,20 +1,21 @@
 #TODO change to bulk inseration in the database
 #TODO Implement retry on rate limit instead of sleeping for a random amount
 from pathlib import Path
+from io import BytesIO
 import sqlite3,time,json,os,socket
 from threading import Thread
 from queue import Queue
 from winsound import Beep
 
 from flask import Flask,render_template,g,request,redirect,url_for
-import pymupdf
+from pypdf import PdfReader
 
 from helpers.db_handle import DBHandle
 from helpers.api_keeper import store_keys,get_key
 from helpers.llm import LLM
 
 #Modules to check for sites (each module handles a site)
-from targets import sabbar
+from targets import sabbar,jobsarab,naukrigulf
 
 
 
@@ -65,6 +66,8 @@ def write_to_db():
             db_queue.task_done()
 
 def check_for_jobs():
+    while(not config):
+        time.sleep(.1)
     #TODO Move these lines into a function
     connection = sqlite3.connect(HOME / "helpers" / "jobs.db")
     handle = DBHandle(connection)
@@ -74,6 +77,9 @@ def check_for_jobs():
         jobs = []
         try:
             jobs.extend(sabbar.update_jobs())
+            jobs.extend(naukrigulf.update_jobs())
+            jobs.extend(jobsarab.update_jobs())
+            
             for job in jobs:    
                 suitable = True
                 is_duplicate = handle.check_job_exists({"job_id":job["job_id"],"provider":job["provider"]})
@@ -130,8 +136,8 @@ def init_db():
     #Only one time can be commented after running the script the first time
     connection.execute("PRAGMA journal_mode=WAL;")
     connection.execute("PRAGMA synchronous=NORMAL;")
-    
-    DBHandle(connection).drop_tables()
+    #Uncomment if you want to remove the database
+    #DBHandle(connection).drop_tables()
 
    
     DBHandle(connection).init_db()
@@ -202,11 +208,13 @@ def cv():
             file = request.files["file"]
             if file.filename == '' or not allowed_file(file.filename):
                 return render_template("error.html",err="File isn't a pdf")
-            
+
             cv_text = ""
-            with pymupdf.open(stream=file.read(),filetype="pdf") as document:
-                for page in document:
-                    cv_text += page.get_text()
+            with PdfReader(BytesIO(file.read())) as document:
+                for page in document.pages:
+                    cv_text += page.extract_text()
+                cv_text = "\n".join([line for line in cv_text.splitlines() if line != " "])
+            print(cv_text)
             try:
                 MAIN_LLM.create_cv_rules(msg=cv_text.strip(),llm_link=config["cv_llm_link"],llm_model=config["cv_llm_model"],llm_api=get_key("cv_llm_api_key"))
             except KeyError:
@@ -239,4 +247,5 @@ if __name__ == "__main__":
     db_thread.start()
     jobs_thread.start()
 
+    #Host= uses the current machine ip.
     app.run(debug=True,host=socket.gethostbyname(socket.gethostname()),use_reloader=False)
