@@ -247,5 +247,10 @@ if __name__ == "__main__":
     db_thread.start()
     jobs_thread.start()
 
-    #Host= uses the current machine ip.
-    app.run(debug=True,host=socket.gethostbyname(socket.gethostname()),use_reloader=False)
+    #Uncomment to use the current machine ip.
+    #app.run(debug=False,host=socket.gethostbyname(socket.gethostname()),use_reloader=False)
+    
+    #Runs the server on the local address
+    #You can uncomment and use the above if you want to access the site by your mobile for example
+    #Make sure to use it on a private network as this code isn't secure to face the internet
+    app.run(host="127.0.0.1",debug=False,use_reloader=False)
