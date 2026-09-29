@@ -59,7 +59,7 @@ class LLM():
         try:
             resp = requests.post(llm_link,headers=self.header,json=self.body).json()
             time.sleep(5) #Can be disabled for local models, I added it to protect external api's
-
+        
             resp = resp["choices"][0]["message"]["content"]
             return resp
         except requests.exceptions.Timeout:
