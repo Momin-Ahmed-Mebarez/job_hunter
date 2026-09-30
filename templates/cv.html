@@ -3,14 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Board</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='cv.css') }}">
+
+    <title>Upload CV</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='cv.css') }}"
+    >
 </head>
 
 <body>
-    <form method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".pdf" required>
-        <button type="submit">Upload</button>
-    </form>
+
+    <main class="cv-page">
+
+        <section class="upload-card">
+
+            <header class="upload-header">
+                <h1>Upload your CV</h1>
+                <p>
+                    Add your CV so it can be used when evaluating job listings.
+                    PDF files only.
+                </p>
+            </header>
+
+            <form
+                method="post"
+                enctype="multipart/form-data"
+                class="upload-form"
+            >
+
+                <label class="file-field">
+                    <span>CV file</span>
+
+                    <input
+                        class="file-input"
+                        type="file"
+                        name="file"
+                        accept=".pdf,application/pdf"
+                        required
+                    >
+
+                    <small class="file-hint">
+                        Accepted format: PDF
+                    </small>
+                </label>
+
+                <button class="upload-button" type="submit">
+                    Upload CV
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+
 </body>
 </html>

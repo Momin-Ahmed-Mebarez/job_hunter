@@ -1,0 +1,199 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --background: #f4f6f8;
+    --surface: #ffffff;
+    --border: #d9dee7;
+
+    --text: #1f2937;
+    --text-secondary: #6b7280;
+
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-soft: #eff6ff;
+
+    --shadow: 0 18px 45px rgba(31, 41, 55, 0.08);
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    display: grid;
+    place-items: center;
+
+    padding: 24px;
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    color: var(--text);
+    background: var(--background);
+}
+
+.cv-page {
+    width: 100%;
+    max-width: 560px;
+}
+
+.upload-card {
+    width: 100%;
+    padding: 36px;
+
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+}
+
+.upload-header {
+    margin-bottom: 28px;
+}
+
+.upload-header h1 {
+    margin: 0 0 8px;
+
+    font-size: 28px;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+}
+
+.upload-header p {
+    margin: 0;
+
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.file-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.file-field > span {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.file-input {
+    width: 100%;
+    padding: 8px;
+
+    color: var(--text-secondary);
+    background: #fff;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    font: inherit;
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.file-input:hover {
+    border-color: #b7c0cd;
+}
+
+.file-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.file-input::file-selector-button {
+    margin-right: 12px;
+    padding: 10px 14px;
+
+    border: 0;
+    border-radius: 7px;
+
+    color: var(--primary);
+    background: var(--primary-soft);
+
+    font: inherit;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.file-input::file-selector-button:hover {
+    color: #ffffff;
+    background: var(--primary);
+}
+
+.file-hint {
+    margin: 0;
+
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.upload-button {
+    width: 100%;
+    padding: 12px 18px;
+
+    border: 0;
+    border-radius: 9px;
+
+    color: #ffffff;
+    background: var(--primary);
+
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.1s ease,
+        box-shadow 0.2s ease;
+}
+
+.upload-button:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
+}
+
+.upload-button:active {
+    transform: translateY(1px);
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 16px;
+    }
+
+    .upload-card {
+        padding: 26px 22px;
+        border-radius: 14px;
+    }
+
+    .upload-header h1 {
+        font-size: 24px;
+    }
+}
