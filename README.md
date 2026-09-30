@@ -1,6 +1,6 @@
 <h1 align="center">(WIP) Job hunter</h1>
 <p align="center">Your aid to stay updated with the latest suitable job offers</p>
-<p align="center">Local and external LLM support (Only openai compatible)</p>
+<p align="center">LLM support (Only openai compatible)</p>
 
 ## NOTE
 Only jobs offered in Jeddah are supported but feel to edit /targets/(targeted site).py links list to add another page. I plan on adding support but it's a low priority.
